@@ -8,7 +8,7 @@ Made in **C**
 [Wikipedia page](https://en.wikipedia.org/wiki/Levenshtein_distance)
 
 ### Graph
-Graph-related algorithms project (A*, Dijkstra), in a rough state  
+Graph-related algorithms project (A* , Dijkstra), in a rough state  
 Made in **C++**
 
 ### Swap capitalization
