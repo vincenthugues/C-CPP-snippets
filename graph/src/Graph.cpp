@@ -8,7 +8,9 @@
 #include "Vertex.hpp"
 
 Graph::Graph(Graph::Direction direction, std::string const & filePath)
-	: _direction(direction), _nbVertices(0), _nbEdges(0)
+	: _direction(direction),
+	_nbVertices(0),
+	_nbEdges(0)
 {
 	aStarData data;
 
@@ -45,7 +47,8 @@ void Graph::dijkstra(void)
 	x->setStatus(Vertex::VISITING);
 	processing.push_back(x);
 
-	while (!processing.empty()) {
+	while (!processing.empty())
+	{
 		x = getSmallestDist(processing);
 
 		// Check for each edge
@@ -114,7 +117,8 @@ void Graph::aStar(std::string const & target)
 				//std::cout << y->getName() << "(d=" << y->getDistance()
 				//<< ", p=" << y->getPrev()->getName() << ")" << std::endl;//
 			}
-			if (y->getStatus() == Vertex::NOT_VISITED) {
+			if (y->getStatus() == Vertex::NOT_VISITED)
+			{
 				y->setStatus(Vertex::VISITING);
 				processing.push_back(y);
 			}
@@ -164,7 +168,7 @@ void Graph::printShortestPaths(void)
 
 bool Graph::addVertex(std::string const & name, int x, int y)
 {
-	// If the vertex has already been added
+	// Make sure that the vertex has not already been added
 	if (std::find(_vtcNames.begin(), _vtcNames.end(), name) != _vtcNames.end())
 		return false;
 
@@ -188,20 +192,20 @@ bool Graph::addEdge(std::string const & src, std::string const & dst, int wt)
 	return true;
 }
 
-Vertex * Graph::getVertex(std::string const & name)
+Vertex * Graph::getVertex(std::string const & name) const
 {
-	for (verticesVect::iterator it = _vertices.begin(); it != _vertices.end(); ++it)
+	for (verticesVect::const_iterator it = _vertices.begin(); it != _vertices.end(); ++it)
 		if ((*it)->getName() == name)
 			return *it;
 	return NULL;
 }
 
-Vertex * Graph::getSmallestDist(std::list< Vertex * > lst)
+Vertex * Graph::getSmallestDist(std::list< Vertex * > lst) const
 {
 	Vertex	*vtx = NULL;
 	int min = INFINITE;
 
-	for (std::list< Vertex * >::iterator it = lst.begin(); it != lst.end(); ++it)
+	for (std::list< Vertex * >::const_iterator it = lst.begin(); it != lst.end(); ++it)
 	{
 		if ((*it)->getHeuristic() != INFINITE)
 		{ // A* algorithm

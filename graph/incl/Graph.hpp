@@ -39,8 +39,8 @@ public: // Getters
 	uint			getNbEdges(void) const { return _nbEdges; }
 
 protected: // Internal utility functions
-	Vertex *		getVertex(std::string const & name);
-	Vertex *		getSmallestDist(std::list< Vertex * > lst);
+	Vertex *		getVertex(std::string const & name) const;
+	Vertex *		getSmallestDist(std::list< Vertex * > lst) const;
 
 protected:
 	arcsVect	_arcs;		// Vector of arcs (pairs of strings)
