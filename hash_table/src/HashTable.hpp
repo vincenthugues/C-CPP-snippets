@@ -19,7 +19,7 @@ public:
 	
 protected:
 	size_t _tableSize;
-	Item * _table;
+	Item ** _table;
 };
 
 #endif
