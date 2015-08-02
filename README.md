@@ -11,6 +11,10 @@ Made in **C**
 Graph-related algorithms project (A* , Dijkstra), in a rough state  
 Made in **C++**
 
+### Hash table
+Simple hash table implementation  
+Made in **C++**  
+
 ### Swap capitalization
 Swap the capitalization of 2 input strings of the same length  
 Made in **C**  
