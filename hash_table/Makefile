@@ -1,7 +1,6 @@
 
 NAME		= hash_table
-SRCS		= src/main.cpp		\
-		src/HashTable.cpp
+SRCS		= src/main.cpp
 OBJS		= $(SRCS:.cpp=.o)
 
 OPTI		= 
