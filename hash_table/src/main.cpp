@@ -13,6 +13,10 @@ void testHashTable()
 		std::cout << "Add item { key = " << keys[i] << ", value = " << values[i] << " }" << std::endl;
 		table.AddItem(keys[i], values[i]);
 	}
+	
+	std::cout << "Remove item { key = " << keys[0] << " }" << std::endl;
+	table.RemoveItem(keys[0]);
+	table.RemoveItem(keys[0]);
 }
 
 int main()
