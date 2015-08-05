@@ -30,7 +30,7 @@ public:
 			{
 				Item *nextItem = item->next;
 				
-				std::cout << "Destructor: Deleting item with key " << item->key << std::endl;
+				// std::cout << "Destructor: Deleting item with key " << item->key << std::endl;
 				delete item;
 				item = nextItem;
 			}
@@ -58,7 +58,7 @@ public:
 		item->value = value;
 		item->next = NULL;
 		
-		std::cout << "Storing item at index " << index << std::endl;
+		// std::cout << "Storing item at index " << index << std::endl;
 		
 		if (_table[index] == NULL)
 			_table[index] = item;
@@ -77,7 +77,7 @@ public:
 	{
 		int index = Hash(key);
 		
-		std::cout << "Removing item at index " << index << std::endl;
+		// std::cout << "Removing item at index " << index << std::endl;
 		
 		Item *prevItem = NULL, *item = _table[index];
 		while (item != NULL)
