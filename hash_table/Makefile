@@ -5,7 +5,7 @@ OBJS		= $(SRCS:.cpp=.o)
 
 OPTI		= 
 IPATH		= -I.
-OBJOPT	= $(OPTI) -W -Wall
+OBJOPT	= $(OPTI) -W -Wall -std=c++11
 CXXFLAGS	= $(OBJOPT) $(IPATH)
 CXX		= g++
 

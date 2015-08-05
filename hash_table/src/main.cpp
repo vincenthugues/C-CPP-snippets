@@ -1,22 +1,45 @@
 #include <iostream>
+#include <vector>
 #include "HashTable.hpp"
+
+// random_string
+// stackoverflow.com/questions/440133/how-do-i-create-a-random-alpha-numeric-string-in-c
+std::string getRandomString(size_t length)
+{
+	auto randchar = []() -> char
+	{
+		const char charset[] =
+			"0123456789"
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz";
+		
+		const size_t max_index = (sizeof(charset) - 1);
+		
+		return charset[ rand() % max_index ];
+	};
+	
+	std::string str(length,0);
+	std::generate_n(str.begin(), length, randchar);
+	
+	return str;
+}
 
 void testHashTable()
 {
-	static const std::string keys[5] = { "key1", "key2", "key3", "key1", "1yek" };
-	static const std::string values[5] = { "abc", "def", "ghi", "jkl", "mno" };
-	
 	HashTable<std::string> table;
+	std::vector< std::pair< std::string, std::string > > data;
 	
-	for (size_t i = 0; i < 5; ++i)
+	for (int i = 0; i < 1000; ++i)
+		data.push_back(std::pair< std::string, std::string >(getRandomString(5), getRandomString(10)));
+	
+	for (size_t i = 0; i < data.size(); ++i)
 	{
-		std::cout << "Add item { key = " << keys[i] << ", value = " << values[i] << " }" << std::endl;
-		table.AddItem(keys[i], values[i]);
+		// std::cout << "Add item { key = " << data[i].first << ", value = " << data[i].second << " }" << std::endl;
+		table.AddItem(data[i].first, data[i].second);
 	}
 	
-	std::cout << "Remove item { key = " << keys[0] << " }" << std::endl;
-	table.RemoveItem(keys[0]);
-	table.RemoveItem(keys[0]);
+	// table.RemoveItem(keys[0]);
+	// table.RemoveItem(keys[0]);
 }
 
 int main()
