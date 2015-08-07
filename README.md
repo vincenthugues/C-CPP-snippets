@@ -2,6 +2,10 @@
 
 ## Snippets/projects
 
+### Hash table
+Simple hash table implementation with separate chaining  
+Made in **C++**  
+
 ### Levenshtein distance
 Compute the "distance" between 2 strings  
 Made in **C**  
@@ -10,10 +14,6 @@ Made in **C**
 ### Graph
 Graph-related algorithms project (A* , Dijkstra), in a rough state  
 Made in **C++**
-
-### Hash table
-Simple hash table implementation  
-Made in **C++**  
 
 ### Swap capitalization
 Swap the capitalization of 2 input strings of the same length  

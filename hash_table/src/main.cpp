@@ -24,9 +24,19 @@ std::string getRandomString(size_t length)
 	return str;
 }
 
+int hashFunction(const std::string & key, int tableSize)
+{
+	int n = 0;
+	
+	for (size_t i = 0; i < key.length(); ++i)
+		n += static_cast<int>(key[i]);
+	
+	return n % tableSize;
+}
+
 void testHashTable()
 {
-	HashTable<std::string> table;
+	HashTable<std::string> table(128, &hashFunction);
 	std::vector< std::pair< std::string, std::string > > dataset;
 	
 	for (int i = 0; i < 1000; ++i)
@@ -37,11 +47,13 @@ void testHashTable()
 		table.AddItem(dataset[i].first, dataset[i].second);
 	}
 	
+	table.showDistribution();
+	
 	for (int i = 0; i < 100; ++i)
 	{
 		std::string key = dataset[rand() % dataset.size()].first;
 		
-		std::cout << "Remove first item with key = " << key << std::endl;
+		// std::cout << "Remove first item with key = " << key << std::endl;
 		table.RemoveItem(key);
 	}
 }

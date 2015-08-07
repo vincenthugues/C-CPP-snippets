@@ -12,9 +12,10 @@ public:
 		Item *next;
 	};
 
-	HashTable(size_t tableSize = 100)
+	HashTable(size_t tableSize = 100, int (*hashFunction)(const std::string &, int) = NULL)
 		: _tableSize(tableSize),
-		_table(new Item*[tableSize])
+		_table(new Item*[tableSize]),
+		_hashFunction(hashFunction)
 	{
 		for (size_t i = 0; i < tableSize; ++i)
 			_table[i] = NULL;
@@ -41,6 +42,9 @@ public:
 
 	int Hash(std::string key) const
 	{
+		if (_hashFunction)
+			return _hashFunction(key, _tableSize);
+		
 		int n = 0;
 		
 		for (size_t i = 0; i < key.length(); ++i)
@@ -102,9 +106,23 @@ public:
 		}
 	}
 
+	void showDistribution()
+	{
+		for (size_t index = 0; index < _tableSize; ++index)
+		{
+			int nbItems = 0;
+			
+			std::cout << "[" << index << "]\t";
+			for (Item *item = _table[index]; item != NULL; item = item->next)
+				std::cout << "+";
+			std::cout << std::endl;
+		}
+	}
+
 protected:
 	size_t _tableSize;
 	Item ** _table;
+	int (*_hashFunction)(const std::string & key, int tableSize);
 };
 
 #endif
