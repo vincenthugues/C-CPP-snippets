@@ -36,8 +36,10 @@ int hashFunction(const std::string & key, int tableSize)
 
 void testHashTable()
 {
-	HashTable<std::string> table(128, &hashFunction);
+	HashTable< std::string > table(256, &hashFunction);
 	std::vector< std::pair< std::string, std::string > > dataset;
+	
+	std::srand(std::time(0));
 	
 	for (int i = 0; i < 1000; ++i)
 	{
@@ -47,8 +49,6 @@ void testHashTable()
 		table.AddItem(dataset[i].first, dataset[i].second);
 	}
 	
-	table.showDistribution();
-	
 	for (int i = 0; i < 100; ++i)
 	{
 		std::string key = dataset[rand() % dataset.size()].first;
@@ -56,6 +56,9 @@ void testHashTable()
 		// std::cout << "Remove first item with key = " << key << std::endl;
 		table.RemoveItem(key);
 	}
+	
+	table.showDistribution();
+	table.printStats();
 }
 
 int main()

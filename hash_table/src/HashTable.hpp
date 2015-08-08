@@ -37,7 +37,7 @@ public:
 			}
 		}
 		
-		delete  _table;
+		delete [] _table;
 	}
 
 	int Hash(std::string key) const
@@ -106,17 +106,49 @@ public:
 		}
 	}
 
-	void showDistribution()
+	void showDistribution() const
 	{
 		for (size_t index = 0; index < _tableSize; ++index)
 		{
-			int nbItems = 0;
-			
 			std::cout << "[" << index << "]\t";
 			for (Item *item = _table[index]; item != NULL; item = item->next)
 				std::cout << "+";
 			std::cout << std::endl;
 		}
+	}
+
+	void printStats() const
+	{
+		size_t nbItems = 0, nbEmptyBuckets = 0, nbCollisions = 0, biggestBucketSize = 0;
+		
+		for (size_t index = 0; index < _tableSize; ++index)
+		{
+			Item *bucketHead = _table[index];
+			
+			if (bucketHead)
+			{
+				size_t bucketSize = 0;
+				
+				for (Item *item = bucketHead; item != NULL; item = item->next)
+					++bucketSize;
+				
+				nbItems += bucketSize;
+				
+				if (bucketSize > 1)
+					nbCollisions += bucketSize - 1;
+				
+				if (bucketSize > biggestBucketSize)
+					biggestBucketSize = bucketSize;
+			}
+			else
+				++nbEmptyBuckets;
+		}
+		
+		std::cout << "Items: " << nbItems
+			<< "\nEmpty buckets: " << nbEmptyBuckets
+			<< "\nCollisions: " << nbCollisions
+			<< "\nBiggest bucket size: " << biggestBucketSize
+			<< std::endl;
 	}
 
 protected:
