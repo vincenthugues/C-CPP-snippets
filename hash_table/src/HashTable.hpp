@@ -120,6 +120,7 @@ public:
 	void printStats() const
 	{
 		size_t nbItems = 0, nbEmptyBuckets = 0, nbCollisions = 0, biggestBucketSize = 0;
+		float loadFactor;
 		
 		for (size_t index = 0; index < _tableSize; ++index)
 		{
@@ -144,10 +145,13 @@ public:
 				++nbEmptyBuckets;
 		}
 		
+		loadFactor = nbItems / _tableSize;
+		
 		std::cout << "Items: " << nbItems
 			<< "\nEmpty buckets: " << nbEmptyBuckets
 			<< "\nCollisions: " << nbCollisions
 			<< "\nBiggest bucket size: " << biggestBucketSize
+			<< "\nLoad factor: " << loadFactor
 			<< std::endl;
 	}
 

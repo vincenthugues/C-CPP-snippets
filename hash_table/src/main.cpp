@@ -34,12 +34,10 @@ int hashFunction(const std::string & key, int tableSize)
 	return n % tableSize;
 }
 
-void testHashTable()
+void testHashTable1()
 {
 	HashTable< std::string > table(256, &hashFunction);
 	std::vector< std::pair< std::string, std::string > > dataset;
-	
-	std::srand(std::time(0));
 	
 	for (int i = 0; i < 1000; ++i)
 	{
@@ -61,9 +59,22 @@ void testHashTable()
 	table.printStats();
 }
 
+void testHashTable2()
+{
+	HashTable< std::string > table(1024, &hashFunction);
+	
+	for (int i = 0; i < 5000; ++i)
+		table.AddItem(getRandomString(rand() % 10 + 1), getRandomString(rand() % 30 + 1));
+	
+	table.showDistribution();
+	table.printStats();
+}
+
 int main()
 {
-	testHashTable();
+	std::srand(std::time(0));
+	
+	testHashTable2();
 	
 	return 0;
 }
