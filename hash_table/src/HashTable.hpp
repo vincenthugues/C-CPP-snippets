@@ -6,15 +6,15 @@
 template <typename T>
 class HashTable {
 public:
-	struct Item {
+	struct Entry {
 		std::string key;
 		T value;
-		Item *next;
+		Entry *next;
 	};
 
 	HashTable(size_t tableSize = 100, int (*hashFunction)(const std::string &, int) = NULL)
 		: _tableSize(tableSize),
-		_table(new Item*[tableSize]),
+		_table(new Entry*[tableSize]),
 		_hashFunction(hashFunction)
 	{
 		for (size_t i = 0; i < tableSize; ++i)
@@ -25,15 +25,15 @@ public:
 	{
 		for (size_t i = 0; i < _tableSize; ++i)
 		{
-			Item *item = _table[i];
+			Entry *entry = _table[i];
 			
-			while (item != NULL)
+			while (entry != NULL)
 			{
-				Item *nextItem = item->next;
+				Entry *nextEntry = entry->next;
 				
-				// std::cout << "Destructor: Deleting item with key " << item->key << std::endl;
-				delete item;
-				item = nextItem;
+				// std::cout << "Destructor: Deleting entry with key " << entry->key << std::endl;
+				delete entry;
+				entry = nextEntry;
 			}
 		}
 		
@@ -53,56 +53,56 @@ public:
 		return n % _tableSize;
 	}
 
-	void AddItem(std::string key, T value)
+	void AddEntry(std::string key, T value)
 	{
 		int index = Hash(key);
 		
-		Item *item = new Item();
-		item->key = key;
-		item->value = value;
-		item->next = NULL;
+		Entry *entry = new Entry();
+		entry->key = key;
+		entry->value = value;
+		entry->next = NULL;
 		
-		// std::cout << "Storing item at index " << index << std::endl;
+		// std::cout << "Storing entry at index " << index << std::endl;
 		
 		if (_table[index] == NULL)
-			_table[index] = item;
+			_table[index] = entry;
 		else
 		{
-			Item *prevItem = _table[index];
+			Entry *prevEntry = _table[index];
 			
-			while (prevItem->next != NULL)
-				prevItem = prevItem->next;
+			while (prevEntry->next != NULL)
+				prevEntry = prevEntry->next;
 			
-			prevItem->next = item;
+			prevEntry->next = entry;
 		}
 	}
 
-	void RemoveItem(std::string key)
+	void RemoveEntry(std::string key)
 	{
 		int index = Hash(key);
 		
-		// std::cout << "Removing item at index " << index << std::endl;
+		// std::cout << "Removing entry at index " << index << std::endl;
 		
-		Item *prevItem = NULL, *item = _table[index];
-		while (item != NULL)
+		Entry *prevEntry = NULL, *entry = _table[index];
+		while (entry != NULL)
 		{
-			if (item->key == key)
+			if (entry->key == key)
 			{
-				// If there's a previous item, link it to the next one;
-				// otherwise the item was the first one so the table's entry needs to be updated
-				if (prevItem)
-					prevItem->next = item->next;
+				// If there's a previous entry, link it to the next one;
+				// otherwise the entry was the first one so the table's entry needs to be updated
+				if (prevEntry)
+					prevEntry->next = entry->next;
 				else
-					_table[index] = item->next;
+					_table[index] = entry->next;
 				
 				// Free the node's memory space
-				delete item;
+				delete entry;
 				
 				return;
 			}
 			
-			prevItem = item;
-			item = item->next;
+			prevEntry = entry;
+			entry = entry->next;
 		}
 	}
 
@@ -111,7 +111,7 @@ public:
 		for (size_t index = 0; index < _tableSize; ++index)
 		{
 			std::cout << "[" << index << "]\t";
-			for (Item *item = _table[index]; item != NULL; item = item->next)
+			for (Entry *entry = _table[index]; entry != NULL; entry = entry->next)
 				std::cout << "+";
 			std::cout << std::endl;
 		}
@@ -119,21 +119,21 @@ public:
 
 	void printStats() const
 	{
-		size_t nbItems = 0, nbEmptyBuckets = 0, nbCollisions = 0, biggestBucketSize = 0;
-		float loadFactor;
+		size_t nbEntries = 0, nbEmptyBuckets = 0, nbCollisions = 0, biggestBucketSize = 0;
+		float loadFactor, variance, standardDeviation;
 		
 		for (size_t index = 0; index < _tableSize; ++index)
 		{
-			Item *bucketHead = _table[index];
+			Entry *bucketHead = _table[index];
 			
 			if (bucketHead)
 			{
 				size_t bucketSize = 0;
 				
-				for (Item *item = bucketHead; item != NULL; item = item->next)
+				for (Entry *entry = bucketHead; entry != NULL; entry = entry->next)
 					++bucketSize;
 				
-				nbItems += bucketSize;
+				nbEntries += bucketSize;
 				
 				if (bucketSize > 1)
 					nbCollisions += bucketSize - 1;
@@ -145,9 +145,9 @@ public:
 				++nbEmptyBuckets;
 		}
 		
-		loadFactor = nbItems / _tableSize;
+		loadFactor = nbEntries / _tableSize;
 		
-		std::cout << "Items: " << nbItems
+		std::cout << "Entries: " << nbEntries
 			<< "\nEmpty buckets: " << nbEmptyBuckets
 			<< "\nCollisions: " << nbCollisions
 			<< "\nBiggest bucket size: " << biggestBucketSize
@@ -157,7 +157,7 @@ public:
 
 protected:
 	size_t _tableSize;
-	Item ** _table;
+	Entry ** _table;
 	int (*_hashFunction)(const std::string & key, int tableSize);
 };
 

@@ -44,15 +44,15 @@ void testHashTable1()
 		dataset.push_back(std::pair< std::string, std::string >(
 			getRandomString(rand() % 10 + 1),
 			getRandomString(rand() % 30 + 1)));
-		table.AddItem(dataset[i].first, dataset[i].second);
+		table.AddEntry(dataset[i].first, dataset[i].second);
 	}
 	
 	for (int i = 0; i < 100; ++i)
 	{
 		std::string key = dataset[rand() % dataset.size()].first;
 		
-		// std::cout << "Remove first item with key = " << key << std::endl;
-		table.RemoveItem(key);
+		// std::cout << "Remove first entry with key = " << key << std::endl;
+		table.RemoveEntry(key);
 	}
 	
 	table.showDistribution();
@@ -64,7 +64,7 @@ void testHashTable2()
 	HashTable< std::string > table(1024, &hashFunction);
 	
 	for (int i = 0; i < 5000; ++i)
-		table.AddItem(getRandomString(rand() % 10 + 1), getRandomString(rand() % 30 + 1));
+		table.AddEntry(getRandomString(rand() % 10 + 1), getRandomString(rand() % 30 + 1));
 	
 	table.showDistribution();
 	table.printStats();
