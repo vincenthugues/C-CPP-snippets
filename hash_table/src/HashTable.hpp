@@ -1,4 +1,5 @@
 #include <string>
+#include <cmath>
 
 #ifndef HASH_TABLE_HPP_
 # define HASH_TABLE_HPP_
@@ -121,7 +122,8 @@ public:
 	void printStats() const
 	{
 		size_t nbEmptyBuckets = 0, nbCollisions = 0, biggestBucketSize = 0;
-		float loadFactor, variance, standardDeviation;
+		double mean = static_cast<double>(_nbEntries) / static_cast<double>(_tableSize); // Load factor
+		double variance = 0, standardDeviation;
 		
 		for (size_t index = 0; index < _tableSize; ++index)
 		{
@@ -139,18 +141,23 @@ public:
 				
 				if (bucketSize > biggestBucketSize)
 					biggestBucketSize = bucketSize;
+				
+				variance += pow(bucketSize - mean, 2);
 			}
 			else
 				++nbEmptyBuckets;
 		}
 		
-		loadFactor = _nbEntries / _tableSize;
+		variance /= _tableSize;
+		standardDeviation = sqrt(variance);
 		
-		std::cout << "Entries: " << _nbEntries
+		std::cout << "Number of entries: " << _nbEntries
 			<< "\nEmpty buckets: " << nbEmptyBuckets
 			<< "\nCollisions: " << nbCollisions
 			<< "\nBiggest bucket size: " << biggestBucketSize
-			<< "\nLoad factor: " << loadFactor
+			<< "\nLoad factor: " << mean
+			<< "\nVariance: " << variance
+			<< "\nStandard deviation: " << standardDeviation
 			<< std::endl;
 	}
 
