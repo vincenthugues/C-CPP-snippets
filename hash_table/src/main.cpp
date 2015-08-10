@@ -24,12 +24,12 @@ std::string getRandomString(size_t length)
 	return str;
 }
 
-int hashFunction(const std::string & key, int tableSize)
+size_t hashFunction(const std::string & key, size_t tableSize)
 {
 	int n = 0;
 	
 	for (size_t i = 0; i < key.length(); ++i)
-		n += static_cast<int>(key[i]);
+		n += static_cast<size_t>(key[i]);
 	
 	return n % tableSize;
 }
