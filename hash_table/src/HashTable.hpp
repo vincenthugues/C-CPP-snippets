@@ -15,8 +15,7 @@ public:
 	};
 
 	HashTable(size_t tableSize = 100, size_t (*hashFunction)(const std::string &, size_t) = NULL)
-		: _tableSize(tableSize),
-		_table(std::vector<Entry*>(tableSize)),
+		: _table(std::vector<Entry*>(tableSize)),
 		_hashFunction(hashFunction),
 		_nbEntries(0)
 	{
@@ -26,7 +25,7 @@ public:
 
 	~HashTable()
 	{
-		for (size_t i = 0; i < _tableSize; ++i)
+		for (size_t i = 0; i < _table.size(); ++i)
 		{
 			Entry *entry = _table[i];
 			
@@ -34,8 +33,8 @@ public:
 			{
 				Entry *nextEntry = entry->next;
 				
-				// std::cout << "Destructor: Deleting entry with key " << entry->key << std::endl;
 				delete entry;
+				
 				entry = nextEntry;
 			}
 		}
@@ -44,14 +43,14 @@ public:
 	size_t Hash(std::string key) const
 	{
 		if (_hashFunction)
-			return _hashFunction(key, _tableSize);
+			return _hashFunction(key, _table.size());
 		
 		int n = 0;
 		
 		for (size_t i = 0; i < key.length(); ++i)
 			n += static_cast<size_t>(key[i]);
 		
-		return n % _tableSize;
+		return n % _table.size();
 	}
 
 	void AddEntry(std::string key, T value)
@@ -109,7 +108,7 @@ public:
 
 	void showDistribution() const
 	{
-		for (size_t index = 0; index < _tableSize; ++index)
+		for (size_t index = 0; index < _table.size(); ++index)
 		{
 			std::cout << "[" << index << "]\t";
 			for (Entry *entry = _table[index]; entry != NULL; entry = entry->next)
@@ -121,10 +120,10 @@ public:
 	void printStats() const
 	{
 		size_t nbEmptyBuckets = 0, nbCollisions = 0, biggestBucketSize = 0;
-		double mean = static_cast<double>(_nbEntries) / static_cast<double>(_tableSize); // Load factor
+		double mean = static_cast<double>(_nbEntries) / static_cast<double>(_table.size()); // Load factor
 		double variance = 0, standardDeviation;
 		
-		for (size_t index = 0; index < _tableSize; ++index)
+		for (size_t index = 0; index < _table.size(); ++index)
 		{
 			Entry *bucketHead = _table[index];
 			
@@ -147,7 +146,7 @@ public:
 				++nbEmptyBuckets;
 		}
 		
-		variance /= _tableSize;
+		variance /= static_cast<double>(_table.size());
 		standardDeviation = sqrt(variance);
 		
 		std::cout << "Number of entries: " << _nbEntries
@@ -161,7 +160,6 @@ public:
 	}
 
 protected:
-	size_t _tableSize;
 	std::vector<Entry*> _table;
 	size_t (*_hashFunction)(const std::string & key, size_t tableSize);
 	size_t _nbEntries;
