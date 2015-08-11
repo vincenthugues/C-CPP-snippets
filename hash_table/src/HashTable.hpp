@@ -1,3 +1,4 @@
+#include <vector>
 #include <string>
 #include <cmath>
 
@@ -15,7 +16,7 @@ public:
 
 	HashTable(size_t tableSize = 100, size_t (*hashFunction)(const std::string &, size_t) = NULL)
 		: _tableSize(tableSize),
-		_table(new Entry*[tableSize]),
+		_table(std::vector<Entry*>(tableSize)),
 		_hashFunction(hashFunction),
 		_nbEntries(0)
 	{
@@ -38,8 +39,6 @@ public:
 				entry = nextEntry;
 			}
 		}
-		
-		delete [] _table;
 	}
 
 	size_t Hash(std::string key) const
@@ -163,7 +162,7 @@ public:
 
 protected:
 	size_t _tableSize;
-	Entry ** _table;
+	std::vector<Entry*> _table;
 	size_t (*_hashFunction)(const std::string & key, size_t tableSize);
 	size_t _nbEntries;
 };
