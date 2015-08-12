@@ -1,4 +1,5 @@
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <cmath>
 
@@ -17,7 +18,8 @@ public:
 	HashTable(size_t tableSize = 100, size_t (*hashFunction)(const std::string &, size_t) = NULL)
 		: _table(std::vector<Entry*>(tableSize)),
 		_hashFunction(hashFunction),
-		_nbEntries(0)
+		_nbEntries(0),
+		_loadThreshold(.75)
 	{
 		for (size_t i = 0; i < tableSize; ++i)
 			_table[i] = NULL;
@@ -25,37 +27,26 @@ public:
 
 	~HashTable()
 	{
-		for (size_t i = 0; i < _table.size(); ++i)
-		{
-			Entry *entry = _table[i];
-			
-			while (entry != NULL)
-			{
-				Entry *nextEntry = entry->next;
-				
-				delete entry;
-				
-				entry = nextEntry;
-			}
-		}
+		destroyEntries();
 	}
 
-	size_t Hash(std::string key) const
+	size_t hash(std::string key, size_t tableSize) const
 	{
 		if (_hashFunction)
-			return _hashFunction(key, _table.size());
+			return _hashFunction(key, tableSize);
 		
 		int n = 0;
 		
 		for (size_t i = 0; i < key.length(); ++i)
 			n += static_cast<size_t>(key[i]);
 		
-		return n % _table.size();
+		return n % tableSize;
 	}
 
-	void AddEntry(std::string key, T value)
+	// Add a new entry to the table
+	bool insert(std::string key, T value)
 	{
-		size_t index = Hash(key);
+		size_t index = hash(key, _table.size());
 		
 		Entry *entry = new Entry();
 		entry->key = key;
@@ -75,11 +66,21 @@ public:
 		}
 		
 		++_nbEntries;
+		
+		double loadFactor = static_cast<double>(_nbEntries) / static_cast<double>(_table.size());
+		if (loadFactor > _loadThreshold)
+		{
+			resize(_table.size() + std::max(static_cast<size_t>(_table.size() * .2), static_cast<size_t>(1000)));
+			std::cout << "load factor " << loadFactor << std::endl;
+		}
+		
+		return true;
 	}
 
-	void RemoveEntry(std::string key)
+	// Remove the entry with the given key
+	bool remove(std::string key)
 	{
-		size_t index = Hash(key);
+		size_t index = hash(key, _table.size());
 		
 		Entry *prevEntry = NULL, *entry = _table[index];
 		while (entry != NULL)
@@ -98,12 +99,55 @@ public:
 				
 				--_nbEntries;
 				
-				return;
+				return true;
 			}
 			
 			prevEntry = entry;
 			entry = entry->next;
 		}
+		
+		// No corresponding entry found
+		return false;
+	}
+
+	void resize(size_t newSize)
+	{
+		std::vector<Entry*> newTable(newSize);
+		
+		std::cout << "Resizing table from " << _table.size() << " to " << newSize << std::endl;
+		
+		for (size_t index = 0; index < _table.size(); ++index)
+		{
+			Entry *bucketHead = _table[index];
+			
+			if (bucketHead)
+			{
+				Entry *nextEntry = NULL;
+				
+				for (Entry *entry = bucketHead; entry != NULL; entry = nextEntry)
+				{
+					size_t newIndex = hash(entry->key, newSize);
+					
+					// Detach the node from the list but keep the pointer for the next iteration
+					nextEntry = entry->next;
+					entry->next = NULL;
+					
+					if (newTable[newIndex] == NULL)
+						newTable[newIndex] = entry;
+					else
+					{
+						Entry *lastEntry = newTable[newIndex];
+						
+						while (lastEntry->next != NULL)
+							lastEntry = lastEntry->next;
+						
+						lastEntry->next = entry;
+					}
+				}
+			}
+		}
+		
+		_table = newTable;
 	}
 
 	void showDistribution() const
@@ -121,7 +165,7 @@ public:
 	{
 		size_t nbEmptyBuckets = 0, nbCollisions = 0, biggestBucketSize = 0;
 		double mean = static_cast<double>(_nbEntries) / static_cast<double>(_table.size()); // Load factor
-		double variance = 0, standardDeviation;
+		double variance = 0;
 		
 		for (size_t index = 0; index < _table.size(); ++index)
 		{
@@ -147,22 +191,41 @@ public:
 		}
 		
 		variance /= static_cast<double>(_table.size());
-		standardDeviation = sqrt(variance);
 		
 		std::cout << "Number of entries: " << _nbEntries
+			<< "\nNumber of buckets: " << _table.size()
 			<< "\nEmpty buckets: " << nbEmptyBuckets
 			<< "\nCollisions: " << nbCollisions
 			<< "\nBiggest bucket size: " << biggestBucketSize
 			<< "\nLoad factor: " << mean
 			<< "\nVariance: " << variance
-			<< "\nStandard deviation: " << standardDeviation
+			<< "\nStandard deviation: " << sqrt(variance)
 			<< std::endl;
+	}
+
+protected:
+	void destroyEntries()
+	{
+		for (size_t i = 0; i < _table.size(); ++i)
+		{
+			Entry *entry = _table[i];
+			
+			while (entry != NULL)
+			{
+				Entry *nextEntry = entry->next;
+				
+				delete entry;
+				
+				entry = nextEntry;
+			}
+		}
 	}
 
 protected:
 	std::vector<Entry*> _table;
 	size_t (*_hashFunction)(const std::string & key, size_t tableSize);
 	size_t _nbEntries;
+	double _loadThreshold;
 };
 
 #endif
