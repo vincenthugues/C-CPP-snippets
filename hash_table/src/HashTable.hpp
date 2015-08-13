@@ -15,13 +15,13 @@ public:
 		Entry *next;
 	};
 
-	HashTable(size_t tableSize = 100, size_t (*hashFunction)(const std::string &, size_t) = NULL)
+	HashTable(size_t tableSize = 100, size_t (*hashFunction)(const std::string &) = NULL)
 		: _table(std::vector<Entry*>(tableSize)),
 		_hashFunction(hashFunction),
 		_nbEntries(0),
 		_loadThreshold(.75)
 	{
-		for (size_t i = 0; i < tableSize; ++i)
+		for (size_t i = 0; i < _table.size(); ++i)
 			_table[i] = NULL;
 	}
 
@@ -30,23 +30,23 @@ public:
 		destroyEntries();
 	}
 
-	size_t hash(std::string key, size_t tableSize) const
+	size_t hash(std::string key) const
 	{
 		if (_hashFunction)
-			return _hashFunction(key, tableSize);
+			return _hashFunction(key);
 		
 		int n = 0;
 		
 		for (size_t i = 0; i < key.length(); ++i)
 			n += static_cast<size_t>(key[i]);
 		
-		return n % tableSize;
+		return n;
 	}
 
 	// Add a new entry to the table
 	bool insert(std::string key, T value)
 	{
-		size_t index = hash(key, _table.size());
+		size_t index = hash(key) % _table.size();
 		
 		Entry *entry = new Entry();
 		entry->key = key;
@@ -80,7 +80,7 @@ public:
 	// Remove the entry with the given key
 	bool remove(std::string key)
 	{
-		size_t index = hash(key, _table.size());
+		size_t index = hash(key) % _table.size();
 		
 		Entry *prevEntry = NULL, *entry = _table[index];
 		while (entry != NULL)
@@ -126,7 +126,7 @@ public:
 				
 				for (Entry *entry = bucketHead; entry != NULL; entry = nextEntry)
 				{
-					size_t newIndex = hash(entry->key, newSize);
+					size_t newIndex = hash(entry->key) % newSize;
 					
 					// Detach the node from the list but keep the pointer for the next iteration
 					nextEntry = entry->next;
@@ -223,7 +223,7 @@ protected:
 
 protected:
 	std::vector<Entry*> _table;
-	size_t (*_hashFunction)(const std::string & key, size_t tableSize);
+	size_t (*_hashFunction)(const std::string & key);
 	size_t _nbEntries;
 	double _loadThreshold;
 };

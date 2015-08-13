@@ -24,14 +24,28 @@ std::string getRandomString(size_t length)
 	return str;
 }
 
-size_t hashFunction(const std::string & key, size_t tableSize)
+size_t hashFunction(const std::string & key)
 {
 	int n = 0;
 	
 	for (size_t i = 0; i < key.length(); ++i)
 		n += static_cast<size_t>(key[i]);
 	
-	return n % tableSize;
+	return n;
+}
+
+// Robert Sedgwicks simple hash function
+size_t RSHash(const std::string& str)
+{
+	size_t a = 63689, b = 378551, hash = 0;
+	
+	for (size_t i = 0; i < str.length(); ++i)
+	{
+		hash = hash * a + str[i];
+		a *= b;
+	}
+
+	return hash;
 }
 
 void testHashTable1()
@@ -61,7 +75,7 @@ void testHashTable1()
 
 void testHashTable2()
 {
-	HashTable< std::string > table(64, &hashFunction);
+	HashTable< std::string > table(64, &RSHash);
 	
 	for (int i = 0; i < 256; ++i)
 		table.insert(
